@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Finds - Lost and Found</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f0f5f1;
+  color: #173d32;
+}
+header {
+  background: #173d32;
+  color: white;
+  text-align: center;
+  padding: 30px 15px;
+}
+main {
+  max-width: 600px;
+  margin: 25px auto;
+  padding: 15px;
+}
+form, .item {
+  background: white;
+  padding: 18px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+}
+input, select, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin: 7px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+button {
+  background: #236449;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+.item { border-left: 5px solid #236449; }
+small { color: #666; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎒 Campus Finds</h1>
+  <p>Lost it? Found it? Let's reunite!</p>
+</header>
+
+<main>
+  <h2>Report an Item</h2>
+  <form id="reportForm">
+    <input id="name" placeholder="Item name" required>
+    <select id="status">
+      <option>Lost</option>
+      <option>Found</option>
+    </select>
+    <input id="place" placeholder="Location" required>
+    <input id="contact" placeholder="Contact details" required>
+    <button type="submit">Submit Report</button>
+  </form>
+
+  <h2>Recent Reports</h2>
+  <input id="search" placeholder="Search items..."
+         oninput="showItems()">
+  <div id="items"></div>
+</main>
+
+<script>
+let reports = [];
+
+document.getElementById("reportForm").onsubmit = function(e) {
+  e.preventDefault();
+
+  reports.unshift({
+    name: document.getElementById("name").value,
+    status: document.getElementById("status").value,
+    place: document.getElementById("place").value,
+    contact: document.getElementById("contact").value
+  });
+
+  this.reset();
+  showItems();
+};
+
+function showItems() {
+  let search = document.getElementById("search").value.toLowerCase();
+
+  document.getElementById("items").innerHTML =
+    reports.filter(x =>
+      (x.name + x.place + x.status).toLowerCase().includes(search)
+    ).map(x => `
+      <div class="item">
+        <h3>${escapeText(x.name)} - ${escapeText(x.status)}</h3>
+        <p>📍 ${escapeText(x.place)}</p>
+        <small>Contact: ${escapeText(x.contact)}</small>
+      </div>
+    `).join("") || "<p>No reports found.</p>";
+}
+
+function escapeText(text) {
+  return text.replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[c]);
+}
+</script>
+
+</body>
+</html>
